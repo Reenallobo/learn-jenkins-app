@@ -35,6 +35,7 @@ pipeline {
                 npm test
                 '''
             }
+        }
             stage('E2E test') {
                 agent {
                     docker {
@@ -43,21 +44,21 @@ pipeline {
                         }
                 }
 
-            steps {
-                sh '''
-                npm install -g serve
-                serve -s build
-                npx playwright test
-                '''
+                steps {
+                    sh '''
+                    npm install -g serve
+                    serve -s build
+                    npx playwright test
+                    '''
+                }
             }
-            }
-    }
+    }       
     post {
         always {
             junit 'test-results/junit.xml'
 
         }
 
-    }
+    
     }
 }
