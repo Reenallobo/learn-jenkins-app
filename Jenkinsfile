@@ -23,7 +23,7 @@ pipeline {
 
             steps {
                 sh '''
-                cat build/index.html
+                test -f build/index.html
                 npm test
                 '''
             }
