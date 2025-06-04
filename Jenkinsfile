@@ -36,12 +36,12 @@ pipeline {
                 '''
             }
             stage('E2E test') {
-            agent {
-                docker {
-                    image 'mcr.microsoft.com/playwright:v1.52.0-noble'
-                    reuseNode true               
-                    }
-            }
+                agent {
+                    docker {
+                        image 'mcr.microsoft.com/playwright:v1.52.0-noble'
+                        reuseNode true               
+                        }
+                }
 
             steps {
                 sh '''
@@ -50,7 +50,7 @@ pipeline {
                 npx playwright test
                 '''
             }
-        }
+            }
     }
     post {
         always {
@@ -58,5 +58,6 @@ pipeline {
 
         }
 
+    }
     }
 }
