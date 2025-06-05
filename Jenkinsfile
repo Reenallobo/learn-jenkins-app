@@ -20,39 +20,45 @@ pipeline {
             }
         }
         */
-        stage('test') {
-            agent {
-                docker {
-                    image 'node:18-alpine'
-                    reuseNode true               
-                    }
-            }
-
-            steps {
-                sh '''
-                #echo "Test stage"
-                #test -f build/index.html
-                npm test
-                '''
-            }
-        }
-            stage('E2E test') {
-                agent {
-                    docker {
-                        image 'mcr.microsoft.com/playwright:v1.39.0-jammy'
-                        reuseNode true               
+        stage('test'){
+            parallel{
+                stage('unit test') {
+                    agent {
+                        docker {
+                            image 'node:18-alpine'
+                            reuseNode true               
                         }
                 }
 
                 steps {
                     sh '''
-                    npm install serve
-                    node_modules/.bin/serve -s build &
-                    sleep 10
-                    npx playwright test --reporter=line
+                    #echo "Test stage"
+                    #test -f build/index.html
+                    npm test
                     '''
                 }
             }
+                stage('E2E test') {
+                    agent {
+                        docker {
+                            image 'mcr.microsoft.com/playwright:v1.39.0-jammy'
+                            reuseNode true               
+                            }
+                    }
+
+                    steps {
+                        sh '''
+                        npm install serve
+                        node_modules/.bin/serve -s build &
+                        sleep 10
+                        npx playwright test --reporter=line
+                        '''
+                    }
+                }        
+            }
+
+        }
+        
     }       
     post {
         always {
