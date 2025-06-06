@@ -8,7 +8,7 @@ pipeline {
     }
 
     stages {
-        /*stage('build') {
+        stage('build') {
             agent {
                 docker {
                     image 'node:18-alpine'
@@ -17,6 +17,7 @@ pipeline {
             }
             steps {
                 sh '''
+                echo "git polling introduced"
                 ls -la
                 npm --version
                 node --version
@@ -25,7 +26,7 @@ pipeline {
                 '''
             }
         }
-        */
+        
         stage('test'){
             parallel{
                 stage('unit test') {
