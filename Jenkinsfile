@@ -74,7 +74,7 @@ pipeline {
 
                     post {
                         always {
-                            publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, icon: '', keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'HTML Report', reportTitles: '', useWrapperFileDirectly: true])
+                            publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, icon: '', keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'Local Report', reportTitles: '', useWrapperFileDirectly: true])
 
                         }
                     }
@@ -99,6 +99,32 @@ pipeline {
         
             
                 '''
+            }
+        }
+        stage('Prod E2E test') {
+            agent {
+                docker {
+                    image 'mcr.microsoft.com/playwright:v1.39.0-jammy'
+                    reuseNode true               
+                    }
+            }
+
+            environment {
+                CI_ENVIRONMENT_URL = 'https://elaborate-pavlova-87b771.netlify.app'
+
+        }
+
+            steps {
+                sh '''
+                npx playwright test --reporter=line
+                '''
+            }
+
+            post {
+                always {
+                    publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, icon: '', keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'E2E Report', reportTitles: '', useWrapperFileDirectly: true])
+
+                }
             }
         }
     }       
