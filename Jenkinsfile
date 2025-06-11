@@ -133,7 +133,7 @@ pipeline {
             environment {
                 CI_ENVIRONMENT_URL = 'https://elaborate-pavlova-87b771.netlify.app'
 
-        }
+            }
 
             steps {
                 sh '''
