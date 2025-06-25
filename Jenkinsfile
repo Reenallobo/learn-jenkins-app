@@ -8,30 +8,6 @@ pipeline {
     }
 
     stages {
-        stage('AWS'){
-            agent{
-                docker{
-                    image 'amazon/aws-cli'
-                    args "--entrypoint=''"
-                }
-            }
-            environment {
-                AWS_BUCKET_ID = "learn-jenkins-20250513"
-
-            }
-            steps{
-                withCredentials([usernamePassword(credentialsId: 'my-aws', passwordVariable: 'AWS_SECRET_ACCESS_KEY', usernameVariable: 'AWS_ACCESS_KEY_ID')]) {
-                    sh'''
-                    aws --version
-                    echo "hello" > index.html
-                    aws s3 cp index.html s3://$AWS_BUCKET_ID/index.html
-                    '''
-                }               
-                
-            }
-        }
-
-        
         stage('build') {
             agent {
                 docker {
@@ -48,6 +24,29 @@ pipeline {
                 npm ci
                 npm run build
                 '''
+            }
+        }
+
+        stage('AWS'){
+            agent{
+                docker{
+                    image 'amazon/aws-cli'
+                    args "--entrypoint=''"
+                }
+            }
+            environment {
+                AWS_BUCKET_ID = "learn-jenkins-20250513"
+
+            }
+            steps{
+                withCredentials([usernamePassword(credentialsId: 'my-aws', passwordVariable: 'AWS_SECRET_ACCESS_KEY', usernameVariable: 'AWS_ACCESS_KEY_ID')]) {
+                    sh'''
+                    aws --version
+
+                    aws s3 sync build s3://$AWS_BUCKET_ID
+                    '''
+                }               
+                
             }
         }
         
